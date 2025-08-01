@@ -93,12 +93,12 @@ Uses Nodemailer to send emails. Gmail requires an App Password if 2FA is enabled
 
 🔄 API Overview
 Auth
-POST /api/auth/register — register with { firstName, lastName, emailId, password }
-POST /api/auth/login — login with { emailId, password }, sets JWT cookie
-GET /api/auth/me — returns current user (requires auth)
+- POST /api/auth/register — register with { firstName, lastName, emailId, password }
+- POST /api/auth/login — login with { emailId, password }, sets JWT cookie
+- GET /api/auth/me — returns current user (requires auth)
 
 Reminders
-POST /api/reminders — create reminder; body:
+- POST /api/reminders — create reminder; body:
 {
   "title": "Example",
   "description": "Do thing",
@@ -107,7 +107,7 @@ POST /api/reminders — create reminder; body:
   "time": 14 // required for weekly/monthly
 }
 
-GET /api/reminders — list reminders for authenticated user
+- GET /api/reminders — list reminders for authenticated user
 
 
 🧪 Development Tips
