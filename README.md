@@ -51,14 +51,15 @@ A full-stack reminder app where users can sign up, create scheduled reminders (d
 1. **Install dependencies**
    ```bash
    cd backend
-   npm install```
+   npm install
+```
 
 2. **Create .env in backend/ with:**
-`MONGO_URI=mongodb://127.0.0.1:27017/reminderDB
+```MONGO_URI=mongodb://127.0.0.1:27017/reminderDB
 JWT_SECRET=your_jwt_secret_here
 EMAIL_USER=youremail@gmail.com
 EMAIL_PASS=your_app_password  # Gmail app password if using Gmail
-NODE_ENV=development
+```
 `
 3. **Run development server**
    npm run dev
