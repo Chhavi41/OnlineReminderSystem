@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Create Reminder</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    label { display: block; margin-bottom: 0.25rem; font-weight: 600; }
+    input, select, button { width: 100%; padding: 0.5rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    .hidden { display: none; }
+    .error { color: red; margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Create Reminder</h1>
+  <div id="msg"></div>
+  <form id="create-form">
+    <div>
+      <label for="title">Title</label>
+      <input name="title" id="title" placeholder="Title" required />
+    </div>
+    <div>
+      <label for="description">Description</label>
+      <input name="description" id="description" placeholder="Description" />
+    </div>
+    <div>
+      <label for="frequency">Frequency</label>
+      <select name="frequency" id="frequency" required>
+        <option value="">Select Frequency</option>
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+      </select>
+    </div>
+
+    <div id="schedule-wrapper"></div>
+
+    <div id="time-wrapper" class="hidden">
+      <label for="time">Hour (0–23)</label>
+      <select name="time" id="time">
+        <option value="">Select Hour</option>
+        <!-- options populated by JS -->
+      </select>
+    </div>
+
+    <button type="submit">Save</button>
+  </form>
+
+  <script type="module">
+    import { createReminder } from "./js/api.js";
+    import { ensureAuthOrRedirect } from "./js/auth.js";
+    import { showMessage } from "./js/utils.js";
+
+    await ensureAuthOrRedirect();
+
+    const freqEl = document.getElementById("frequency");
+    const scheduleWrapper = document.getElementById("schedule-wrapper");
+    const timeWrapper = document.getElementById("time-wrapper");
+    const form = document.getElementById("create-form");
+    const msg = document.getElementById("msg");
+
+    if (!freqEl || !scheduleWrapper || !timeWrapper || !form || !msg) {
+      console.error("Missing expected DOM elements");
+      throw new Error("DOM structure broken");
+    }
+
+    // populate time dropdown (0-23)
+    const timeSelect = document.getElementById("time");
+    if (timeSelect) {
+      for (let i = 0; i < 24; i++) {
+        const opt = document.createElement("option");
+        opt.value = String(i);
+        opt.textContent = `Hour ${i}`;
+        timeSelect.appendChild(opt);
+      }
+    }
+
+    function renderScheduleInput(frequency) {
+      if (!scheduleWrapper) return;
+      scheduleWrapper.innerHTML = "";
+
+      if (!frequency) {
+        timeWrapper.classList.add("hidden");
+        return;
+      }
+
+      let inner = "";
+      if (frequency === "daily") {
+        inner = `
+          <div>
+            <label for="schedule">Hours (multiple select)</label><br/>
+            <select name="schedule" id="schedule" multiple size="5">
+              ${Array.from({ length: 24 })
+                .map((_, i) => `<option value="${i}">${i}</option>`)
+                .join("")}
+            </select>
+            <p style="font-size:0.9em; color:#555;">Select one or more hours (0–23)</p>
+          </div>
+        `;
+        timeWrapper.classList.add("hidden");
+      } else if (frequency === "weekly") {
+        inner = `
+          <div>
+            <label for="schedule">Weekdays (0=Sunday)</label><br/>
+            <select name="schedule" id="schedule" multiple size="7">
+              ${["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+                .map((d,i) => `<option value="${i}">${d}</option>`).join("")}
+            </select>
+            <p style="font-size:0.9em; color:#555;">Select weekdays (0=Sunday)</p>
+          </div>
+        `;
+        timeWrapper.classList.remove("hidden");
+      } else if (frequency === "monthly") {
+        inner = `
+          <div>
+            <label for="schedule">Days of month</label><br/>
+            <select name="schedule" id="schedule" multiple size="6">
+              ${Array.from({ length: 31 })
+                .map((_, i) => `<option value="${i+1}">${i+1}</option>`)
+                .join("")}
+            </select>
+            <p style="font-size:0.9em; color:#555;">Select days of month (1–31)</p>
+          </div>
+        `;
+        timeWrapper.classList.remove("hidden");
+      }
+
+      scheduleWrapper.innerHTML = inner;
+    }
+
+    freqEl.addEventListener("change", (e) => {
+      const val = e.target.value;
+      renderScheduleInput(val);
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const title = formData.get("title");
+      const description = formData.get("description");
+      const frequency = formData.get("frequency");
+      const scheduleEl = document.getElementById("schedule");
+      const schedule = scheduleEl
+        ? Array.from(scheduleEl.selectedOptions).map(o => Number(o.value))
+        : [];
+      const time = formData.get("time");
+
+      if (!frequency) {
+        showMessage(msg, "Frequency is required", "error");
+        return;
+      }
+      if (schedule.length === 0) {
+        showMessage(msg, "Schedule selection required", "error");
+        return;
+      }
+      if ((frequency === "weekly" || frequency === "monthly") && !time) {
+        showMessage(msg, "Time is required for weekly/monthly", "error");
+        return;
+      }
+
+      const payload = {
+        title,
+        description,
+        frequency,
+        schedule,
+        time: (frequency === "weekly" || frequency === "monthly") ? Number(time) : undefined
+      };
+
+      try {
+        await createReminder(payload);
+        window.location.href = "reminders.html";
+      } catch (err) {
+        showMessage(msg, "Failed to create reminder: " + (err.message || err), "error");
+      }
+    });
+  </script>
+</body>
+</html>

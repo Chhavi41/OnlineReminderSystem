@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"/>
+  <title>My Reminders</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    button { width: 100%; padding: 0.5rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Reminders</h1>
+  <div id="msg"></div>
+  <button onclick="location.href='create.html'">Create Reminder</button>
+  <div id="reminders-container"></div>
+
+  <script type="module">
+    import { getReminders } from "./js/api.js";
+    import { ensureAuthOrRedirect } from "./js/auth.js";
+    import { showMessage } from "./js/utils.js";
+
+    const container = document.getElementById("reminders-container");
+    const msg = document.getElementById("msg");
+
+    await ensureAuthOrRedirect();
+
+    async function load() {
+      try {
+        const res = await getReminders();
+        const reminders = res.data || res; 
+        container.innerHTML = "";
+        if (!reminders.length) {
+          container.textContent = "No reminders yet.";
+          return;
+        }
+        reminders.forEach(r => {
+          const div = document.createElement("div");
+          div.className = "reminder";
+          let desc = `${r.title} - ${r.frequency} `;
+          if (r.frequency === "daily") {
+            desc += `at hours: ${r.schedule.join(", ")}`;
+          } else if (r.frequency === "weekly") {
+            desc += `on weekdays: ${r.schedule.join(", ")} at ${r.time}h`;
+          } else if (r.frequency === "monthly") {
+            desc += `on days: ${r.schedule.join(", ")} at ${r.time}h`;
+          }
+          div.textContent = desc;
+          container.appendChild(div);
+        });
+      } catch (err) {
+        showMessage(msg, "Failed to load reminders", "error");
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

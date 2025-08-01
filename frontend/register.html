@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>Register</title>
+        <style>
+          body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+          input, select, button { width: 100%; padding: 0.5rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+        </style>
+    </head>
+    <body>
+        <h1>Register</h1>
+        <div id="msg"></div>
+        <form id="register-form">
+            <input name="firstName" placeholder="First Name" required /><br/>
+            <input name="lastName" placeholder="Last Name" required /><br/>
+            <input name="emailId" type="email" placeholder="Email" required /><br/>
+            <input name="password" type="password" placeholder="Password" required /><br/>
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Login</a></p>
+
+        <script type="module">
+            import { register } from "./js/api.js";
+            import { showMessage } from "./js/utils.js";
+        
+            const form = document.getElementById("register-form");
+            const msg = document.getElementById("msg");
+        
+            form.addEventListener("submit", async (e) => {
+              e.preventDefault();
+              const formData = new FormData(form);
+              const firstName = formData.get("firstName");
+              const lastName = formData.get("lastName");
+              const emailId = formData.get("emailId");
+              const password = formData.get("password");
+              console.log(firstName, lastName, emailId, password)
+              try {
+                await register(firstName, lastName, emailId, password);
+                window.location.href = "login.html";
+              } catch (err) {
+                showMessage(msg, "Register failed: " + err.message, "error");
+              }
+            });
+          </script>
+
+    </body>
+</html>
