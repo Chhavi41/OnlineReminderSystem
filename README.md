@@ -15,7 +15,7 @@ A full-stack reminder app where users can sign up, create scheduled reminders (d
 - Protected routes via middleware
 
 ## 🏗️ Architecture / Folder Structure
-remindersystem/
+```remindersystem/
 ├── backend/
 │ ├── src/
 │ │ ├── controllers/ # Express route handlers
@@ -35,6 +35,7 @@ remindersystem/
 │ ├── create.html
 │ ├── js/
 └── README.md # This file
+```
 
 
 ## 🚀 Setup
