@@ -80,10 +80,10 @@ Protected backend routes use userAuth middleware which verifies the token and at
 Frontend bootstraps auth state by calling /api/auth/me.
 
 ⚙️ Reminder Scheduling Logic
-3 types of frequency options for scheduling reminders
-Daily: schedule contains hours (0–23); reminder triggers on those hours.
-Weekly: schedule contains weekdays (0=Sunday); uses time for hour.
-Monthly: schedule contains day-of-month (1–31); uses time for hour.
+- 3 types of frequency options for scheduling reminders
+- Daily: schedule contains hours (0–23); reminder triggers on those hours.
+- Weekly: schedule contains weekdays (0=Sunday); uses time for hour.
+- Monthly: schedule contains day-of-month (1–31); uses time for hour.
 
 
 📧 Email Sending
