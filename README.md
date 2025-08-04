@@ -28,7 +28,7 @@ A full-stack reminder app where users can sign up, create scheduled reminders (d
 │ │ └── index.ts # Entry point
 │ ├── .env # Environment variables (not committed)
 │ └── package.json
-├── frontend-vanilla/ # Vanilla HTML/JS frontend (or React frontend if used)
+├── frontend-vanilla/ # Vanilla HTML/JS frontend 
 │ ├── login.html
 │ ├── register.html
 │ ├── reminders.html
@@ -93,12 +93,13 @@ Uses Nodemailer to send emails. Gmail requires an App Password if 2FA is enabled
 
 🔄 API Overview
 Auth
-- POST /api/auth/register — register with { firstName, lastName, emailId, password }
-- POST /api/auth/login — login with { emailId, password }, sets JWT cookie
+- POST /api/auth/register — register with ```{ firstName, lastName, emailId, password }```
+- POST /api/auth/login — login with ```{ emailId, password }```, sets JWT cookie
 - GET /api/auth/me — returns current user (requires auth)
 
 Reminders
 - POST /api/reminders — create reminder; body:
+```
 {
   "title": "Example",
   "description": "Do thing",
@@ -106,6 +107,7 @@ Reminders
   "schedule": [1,3], // weekdays or hours or days
   "time": 14 // required for weekly/monthly
 }
+```
 
 - GET /api/reminders — list reminders for authenticated user
 
