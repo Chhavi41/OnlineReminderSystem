@@ -120,5 +120,6 @@ To test the cron logic faster, temporarily adjust the cron schedule to "* * * * 
 - Registering a user ≠ Logging them in, Generating a token at /register but then redirecting to /login.html means the token is unused and overwritten after login. 
 - Additionally, on the frontend, input sanitization must be implemented where possible and avoid injecting user input directly into HTML.
 - Since I'm using cookies for authentication, CSRF is a concern because browsers automatically attach cookies to requests. While CORS is configured to allow only specific origins, CORS alone doesn’t fully mitigate CSRF.
+    - CORS only protects JavaScript-initiated requests (like fetch/axios). CSRF attacks use browser-default mechanisms like <form> or <img>, which bypass CORS completely.
 
 
