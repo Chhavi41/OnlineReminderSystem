@@ -114,7 +114,10 @@ Reminders
 
 🧪 Development Tips
 To test the cron logic faster, temporarily adjust the cron schedule to "* * * * *" (every minute).
-Ensure MongoDB is running and MONGO_URI is correct.
 
+
+## Improvements / additions needed
+- Registering a user ≠ Logging them in, Generating a token at /register but then redirecting to /login.html means the token is unused and overwritten after login. 
+- Additionally, on the frontend, input sanitization must be implemented where possible and avoid injecting user input directly into HTML.
 
 
